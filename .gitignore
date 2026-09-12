@@ -1,0 +1,13 @@
+# Gowin build outputs and logs
+fpga/impl/
+*.log
+*.vcd
+# assembler listings (DIAG.ROM itself is committed)
+diag/diag.lst
+diag/diag.sym
+# local deliveries: the BIOS pack inside is copyrighted, never commit it
+files/
+mi_release/
+# tool droppings
+ruvector.db
+.claude-flow/
