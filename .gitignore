@@ -11,3 +11,4 @@ mi_release/
 # tool droppings
 ruvector.db
 .claude-flow/
+__pycache__/
