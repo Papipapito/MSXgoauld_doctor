@@ -617,6 +617,7 @@ keyTab:                         ; row, bit, char (MSX matrix)
     db 5, 1, 'T'
     db 5, 3, 'V'
     db 5, 5, 'X'
+    db 5, 4, 'W'
     db 7, 2, 0x1B               ; ESC
     db 7, 7, 0x0D               ; RETURN
     db 0, 1, '1'

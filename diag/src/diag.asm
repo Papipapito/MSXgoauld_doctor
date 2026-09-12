@@ -83,9 +83,15 @@ KeyLoop:
     jr   z, kVideo
     cp   'X'
     jr   z, kRaw
+    cp   'W'
+    jr   z, kHam
     jr   KeyLoop
 kRaw:
     call RawP3Screen
+    call DoctorScreen
+    jr   KeyLoop
+kHam:
+    call HammerScreen
     call DoctorScreen
     jr   KeyLoop
 kVideo:

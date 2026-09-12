@@ -263,7 +263,7 @@ sS0Rst:      db " RST ", 0
 sS0RstLow:   db "RESET a 0 ", 0
 sS0Wait:     db " WT ", 0
 sS0WaitStuck: db "/WAIT pegado", 0
-sDocFooter:  db "SPC=rep V=vid X=ram3 B=bios K=tec M=bus", 0
+sDocFooter:  db "SPC V X=ram3 W=mart B=bios K=tec M=bus", 0
 
 ; ===========================================================================
 ;  RamTestsAll  -  every map cell marked RAM (primary 0-3 x subslot x page):

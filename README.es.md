@@ -21,7 +21,7 @@ Derivado de [jabadiagm/MSXgoauldSD_tn20k](https://github.com/jabadiagm/MSXgoauld
 
 - Un Goa'uld (Tang Nano 20K) pinchado en el zócalo del Z80 de la placa a reparar y un monitor HDMI.
 - Grabar en la flash del Tang Nano, con el programador de Gowin, como en el Goa'uld normal:
-  - `GoauldDoctor_v1.0.fs` → **0x000000** (o cargarlo en SRAM para una sesión).
+  - `GoauldDoctor_v1.1.fs` → **0x000000** (o cargarlo en SRAM para una sesión).
   - El **pack de BIOS del Goa'uld v1.2** → **0x200000** (el mismo que ya usa tu Goa'uld;
     contiene BIOS con copyright y no se distribuye aquí).
 - La placa tiene que alimentar el Goa'uld: si el Goa'uld se reinicia, mide los 5 V que le llegan.
@@ -97,6 +97,7 @@ calma: una membrana pegada o con falsos contactos no puede moverlo, y sale en la
 |---|---|
 | **SPC** | Repite todo el diagnóstico. |
 | **V** | Patrones en la salida de vídeo **de la placa**: `1` cuadro del Doctor (texto+barras), `2` barras de color a pantalla completa, `3` blanco pleno, `4` negro (solo sincronismo); `ESC` vuelve y el patrón se queda puesto. Para la etapa de vídeo y el conector AV/RF (COMVID del TMS, pin 36: ~1 Vpp). |
+| **W** | Martillo de escrituras: escribe sin parar en la página 3 de la placa para poder mirar con el osciloscopio o el multímetro /W, /RAS y /CAS de las RAM con una señal continua. Multímetro en DC sobre /W: unos 4 V si pulsa, 5,0 V fijos = /W no llega, 0 V = pegado. Cualquier tecla vuelve. |
 | **X** | Página 3 (C000 y E000) en crudo: dos lecturas seguidas y una tercera tras escribir 00..FF. `leo1 != leo2` = el bus flota; si la tercera es igual que las otras, la RAM no escribe. |
 | **B** | Volcado hexadecimal de los primeros bytes de la BIOS de la placa + CRC. |
 | **K** | Matriz del teclado de la placa en vivo (11 filas × 8 bits, `X` = pulsada); el LED CAPS parpadea. `ESC` vuelve. |
@@ -106,6 +107,10 @@ calma: una membrana pegada o con falsos contactos no puede moverlo, y sale en la
 Pantalla `K` (SPC pulsada):
 
 ![Pantalla K](docs/img/pantalla_k_teclado.png)
+
+Pantalla `W`:
+
+![Pantalla W](docs/img/pantalla_w_martillo.png)
 
 Pantalla `X` (la HB-10 sana: la página 3 contiene el C3 que dejó el test de retención y acepta el 00..FF):
 

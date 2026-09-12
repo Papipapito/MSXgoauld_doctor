@@ -1171,6 +1171,95 @@ RawP3Screen:
     call WaitKeyEdge
     ret
 
+; ===========================================================================
+;  HammerScreen  -  key W: write to the board's page 3 non-stop so a scope or
+;                   a multimeter can follow /W, /RAS, /CAS on the RAM chips.
+;                   2 KB bursts (~22 ms) without stack, then a look at the
+;                   keyboard; any key returns.
+; ===========================================================================
+HammerScreen:
+    call INITXT
+    ld   b, 1
+    ld   c, 1
+    ld   hl, sHamTitle
+    call PrintAt
+    call RawPickSlot
+    ld   (p3SlotId), a
+    call PrintSlotId
+    ld   a, 3
+    ld   (p3Page), a
+    ld   b, 3
+    ld   c, 1
+    ld   hl, sHam1
+    call PrintAt
+    ld   b, 4
+    ld   c, 1
+    ld   hl, sHam2
+    call PrintAt
+    ld   b, 6
+    ld   c, 1
+    ld   hl, sHam3
+    call PrintAt
+    ld   b, 7
+    ld   c, 1
+    ld   hl, sHam4
+    call PrintAt
+    ld   b, 8
+    ld   c, 1
+    ld   hl, sHam5
+    call PrintAt
+    ld   b, 10
+    ld   c, 1
+    ld   hl, sHam6
+    call PrintAt
+    ld   b, 11
+    ld   c, 1
+    ld   hl, sHam7
+    call PrintAt
+    ld   b, 13
+    ld   c, 1
+    ld   hl, sHam8
+    call PrintAt
+    ld   b, 24
+    ld   c, 1
+    ld   hl, sRSPressKey
+    call PrintAt
+hamLoop:
+    di
+    ld   a, CTL_IGNINT
+    call MonSetCtrl
+    call P3Prepare
+    P3_SWITCH_ON
+    ld   a, ixh                 ; 2 KB burst (~22 ms), then the keyboard
+    ld   h, a
+    ld   l, 0
+    ld   bc, 0x0800
+hamW:
+    ld   (hl), l
+    inc  hl
+    dec  bc
+    ld   a, b
+    or   c
+    jr   nz, hamW
+    P3_SWITCH_OFF
+    xor  a
+    call MonSetCtrl
+    ei
+    call PollKeyEdge
+    or   a
+    jr   z, hamLoop
+    ret
+
+sHamTitle: db "MARTILLO DE ESCRITURAS EN PAG3, slot ", 0
+sHam1:     db "Escribiendo C000-FFFE sin parar.", 0
+sHam2:     db "Cada byte = un pulso de /WR del Z80.", 0
+sHam3:     db "OSCILOSCOPIO en /W del 4416 (pin 3):", 0
+sHam4:     db " tren de pulsos 5V->0V, ~0.3us cada", 0
+sHam5:     db " ~1.5us. Masa en pin 18 (VSS).", 0
+sHam6:     db "MULTIMETRO (DC) en pin 3: unos 4V.", 0
+sHam7:     db " 5.0V fijo = /W no llega. 0V = pegado.", 0
+sHam8:     db "Compara con el pin 3 del otro 4416.", 0
+
 ; RawPickSlot - A = first slot id with RAM/ROM in page 3 (map order), else 0
 RawPickSlot:
     xor  a

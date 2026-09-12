@@ -12,7 +12,7 @@ OUT = os.path.join(os.path.dirname(__file__), "..", "img")
 def v(text, verdict):            # verdict column 36 (1-based)
     return text.ljust(35) + verdict
 
-FOOTER = "SPC=rep V=vid X=ram3 B=bios K=tec M=bus"
+FOOTER = "SPC V X=ram3 W=mart B=bios K=tec M=bus"
 
 hb10_ok = [
     "GOAULD DOCTOR v1.0  monitor v2",
@@ -163,7 +163,26 @@ bios = [
     "Pulsa una tecla para volver.",
 ]
 
+hammer = [
+    "MARTILLO DE ESCRITURAS EN PAG3, slot S0",
+    "",
+    "Escribiendo C000-FFFE sin parar.",
+    "Cada byte = un pulso de /WR del Z80.",
+    "",
+    "OSCILOSCOPIO en /W del 4416 (pin 3):",
+    " tren de pulsos 5V->0V, ~0.3us cada",
+    " ~1.5us. Masa en pin 18 (VSS).",
+    "",
+    "MULTIMETRO (DC) en pin 3: unos 4V.",
+    " 5.0V fijo = /W no llega. 0V = pegado.",
+    "",
+    "Compara con el pin 3 del otro 4416.",
+    "", "", "", "", "", "", "", "", "", "",
+    "Pulsa una tecla para volver.",
+]
+
 SCREENS = {
+    "pantalla_w_martillo.png": hammer,
     "resumen_hb10_ok.png": hb10_ok,
     "resumen_hb10_ram.png": hb10_ram,
     "resumen_nms8250.png": nms8250,

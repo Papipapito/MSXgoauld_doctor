@@ -23,7 +23,7 @@ The text on screen is in Spanish; every line is explained below.
 
 - A Goa'uld (Tang Nano 20K) plugged into the Z80 socket of the board under repair, and an HDMI monitor.
 - Flash the Tang Nano with the Gowin programmer, exactly like a normal Goa'uld:
-  - `GoauldDoctor_v1.0.fs` → **0x000000** (or load it into SRAM for one session).
+  - `GoauldDoctor_v1.1.fs` → **0x000000** (or load it into SRAM for one session).
   - The **Goa'uld v1.2 BIOS pack** → **0x200000** (the same one your Goa'uld already uses;
     it contains copyrighted BIOS ROMs and is not distributed here).
 - The board has to power the Goa'uld: if the Goa'uld keeps resetting, measure the 5 V it gets.
@@ -100,6 +100,7 @@ or intermittent membrane cannot drive it, and it is reported in the hints.
 |---|---|
 | **SPC** | Runs the whole diagnostic again. |
 | **V** | Test patterns on the **board's** video output: `1` the Doctor frame (text + bars), `2` full-screen colour bars, `3` full white, `4` black (sync only); `ESC` returns and the pattern stays. For the video stage and the AV/RF connector (TMS COMVID, pin 36: ~1 Vpp). |
+| **W** | Write hammer: writes to the board's page 3 non-stop, so you can put a scope or a multimeter on the RAM chips' /W, /RAS and /CAS with a steady signal. DC multimeter on /W: about 4 V when it pulses, a flat 5.0 V means /W never arrives, 0 V stuck. Any key returns. |
 | **X** | Page 3 (C000 and E000) raw: two consecutive reads and a third one after writing 00..FF. `leo1 != leo2` = floating bus; if the third read equals the others, the RAM does not write. |
 | **B** | Hex dump of the first bytes of the board's BIOS + CRC. |
 | **K** | Live keyboard matrix of the board (11 rows × 8 bits, `X` = pressed); the CAPS LED blinks. `ESC` returns. |
@@ -109,6 +110,10 @@ or intermittent membrane cannot drive it, and it is reported in the hints.
 Screen `K` (SPC pressed):
 
 ![Screen K](docs/img/pantalla_k_teclado.png)
+
+Screen `W`:
+
+![Screen W](docs/img/pantalla_w_martillo.png)
 
 Screen `X` (the healthy HB-10: page 3 holds the C3 left by the retention test and takes the 00..FF):
 
