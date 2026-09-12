@@ -1,133 +1,138 @@
-# Goa'uld Doctor — diagnóstico de placas MSX desde el zócalo del Z80
+# Goa'uld Doctor — MSX board diagnostics from the Z80 socket
 
-![El Goa'uld en el zócalo del Z80 de una Sony HB-10](docs/img/foto_goauld_zocalo.jpg)
+🇪🇸 [Versión en castellano](README.es.md)
 
-Firmware especial para el **MSX Goa'uld** (Tang Nano 20K en el zócalo del Z80) que,
-en vez de arrancar el MSX, **prueba la placa** desde dentro: BIOS, RAM, mapper,
-VDP, VRAM, sprites, PPI, PSG, RTC y teclado. El resultado sale por el **HDMI del
-Goa'uld**, así que la placa puede tener la BIOS, la RAM y el vídeo muertos y aun
-así ves qué falla. Es un comprobador en circuito al estilo Fluke 9010A, hecho con
-lo que ya tienes: el Goa'uld.
+![The Goa'uld in the Z80 socket of a Sony HB-10](docs/img/foto_goauld_zocalo.jpg)
 
-Nacido para dos Sony HB-10 japoneses que no arrancaban; sirve para **cualquier
-MSX1 o MSX2** (cualquier slot y subslot, V9938/V9958 con 64/128 KB, mapper, RTC).
+A special firmware for the **MSX Goa'uld** (Tang Nano 20K in the Z80 socket) that,
+instead of booting the MSX, **tests the board** from the inside: BIOS, RAM, memory
+mapper, VDP, VRAM, sprites, PPI, PSG, RTC and keyboard. The verdict comes out of the
+**Goa'uld's HDMI**, so the board may have a dead BIOS, dead RAM and no video and you
+still see what is wrong. Think of a Fluke 9010A in-circuit tester, built with what you
+already have: the Goa'uld.
 
-Derivado de [jabadiagm/MSXgoauldSD_tn20k](https://github.com/jabadiagm/MSXgoauldSD_tn20k)
-(el core MSX2+ del Goa'uld: T80, V9958 de HRA!, SDRAM, cargador de flash). Licencia GPLv3.
+Born for two Japanese Sony HB-10s that would not boot; it works on **any MSX1 or MSX2**
+(any slot and subslot, V9938/V9958 with 64/128 KB VRAM, memory mapper, RTC).
 
-## Qué necesitas
+Derived from [jabadiagm/MSXgoauldSD_tn20k](https://github.com/jabadiagm/MSXgoauldSD_tn20k)
+(the Goa'uld MSX2+ core: T80, HRA!'s V9958, SDRAM, flash loader). GPLv3.
 
-- Un Goa'uld (Tang Nano 20K) pinchado en el zócalo del Z80 de la placa a reparar y un monitor HDMI.
-- Grabar en la flash del Tang Nano, con el programador de Gowin, como en el Goa'uld normal:
-  - `GoauldDoctor_v1.0.fs` → **0x000000** (o cargarlo en SRAM para una sesión).
-  - El **pack de BIOS del Goa'uld v1.2** → **0x200000** (el mismo que ya usa tu Goa'uld;
-    contiene BIOS con copyright y no se distribuye aquí).
-- La placa tiene que alimentar el Goa'uld: si el Goa'uld se reinicia, mide los 5 V que le llegan.
+The text on screen is in Spanish; every line is explained below.
 
-No hace falta tarjeta SD, ni teclado USB, ni WiFi: esta build los quita a propósito.
+## What you need
 
-## Qué sale en pantalla
+- A Goa'uld (Tang Nano 20K) plugged into the Z80 socket of the board under repair, and an HDMI monitor.
+- Flash the Tang Nano with the Gowin programmer, exactly like a normal Goa'uld:
+  - `GoauldDoctor_v1.0.fs` → **0x000000** (or load it into SRAM for one session).
+  - The **Goa'uld v1.2 BIOS pack** → **0x200000** (the same one your Goa'uld already uses;
+    it contains copyrighted BIOS ROMs and is not distributed here).
+- The board has to power the Goa'uld: if the Goa'uld keeps resetting, measure the 5 V it gets.
 
-### 1. Arranque
+No SD card, no USB keyboard, no WiFi: this build leaves them out on purpose.
 
-Logo MSX2+ del Goa'uld (como siempre) y enseguida una línea de progreso:
+## What you see on screen
+
+### 1. Boot
+
+The Goa'uld's MSX2+ logo (as always), then a progress line:
 
 ![probando](docs/img/arranque_probando.png)
 
-Tarda entre 10 s (MSX1) y ~40 s (MSX2 con 128 KB de VRAM y mapper). Mientras
-prueba el VDP, la salida de vídeo **de la placa** enseña barras de color, texto
-y sprites: si tienes su monitor conectado, ahí ves si la etapa de vídeo funciona.
+`probando` = testing. It takes from 10 s (MSX1) to ~40 s (MSX2 with 128 KB VRAM and a
+mapper). While the VDP is under test the **board's own video output** shows colour
+bars, text and sprites: with its monitor connected you can see whether the video
+stage works.
 
-![La salida AV de la HB-10 durante el test del VDP](docs/img/foto_av_placa_patron.jpg)
+![The HB-10's AV output during the VDP test](docs/img/foto_av_placa_patron.jpg)
 
-### 2. El resumen
+### 2. The summary
 
-Ejemplo real: Sony HB-10 sano.
+Real example: a healthy Sony HB-10.
 
-![Resumen HB-10 sano](docs/img/resumen_hb10_ok.png)
+![HB-10 summary, all good](docs/img/resumen_hb10_ok.png)
 
-Cada fila termina en **OK**, **MAL** o **n/d** (no aplica). Se lee de arriba abajo:
-la primera fila en MAL suele ser la avería.
+Every row ends in **OK**, **MAL** (bad) or **n/d** (not applicable). Read it top to
+bottom: the first MAL row is usually the fault.
 
-| Fila | Qué prueba | Qué pone |
+| Row | What it tests | What it says |
 |---|---|---|
-| **RELOJ** | El reloj de 3,58 MHz que la placa da al Z80 (viene del VDP). | `3579.6k placa` = kHz medidos y origen. `INT!` = no llega reloj y el Goa'uld usa el suyo. `RST H/0` = nivel de /RESET y flancos desde el encendido. `WT H` = nivel de /WAIT (`/WAIT pegado` si lo suelta él). |
-| **BIOS** | Lee la ROM de la placa (0000-7FFF) por el bus. | Los dos primeros bytes (`F3C3` = DI;JP), los bytes de identificación 002B-2D, el CRC32 y el nombre de la máquina si lo reconoce (95 ROMs MSX1/MSX2). `BIOS muda` si todo es FF. Si alguna línea de datos no se movió nunca, lo dice abajo en las pistas. |
-| **MAPA** | Cada slot (y subslot si está expandido) por página. | `ROM` lee algo, `RAM` se puede escribir, `---` vacío, `own` la página donde vive el propio Doctor (solo en emulador). |
-| **RAM** | Cada bloque RAM del mapa: March C-, bits andantes, direcciones, retención. | `S0 p3 16383 b OK`, o `FALLO @C123 e=00 g=01 f2` = dirección, esperado, leído y fase. Páginas iguales de un slot se agrupan: `p0-p2 48 KB`. |
-| **MAPPER** | Mapper de memoria (puertos FC-FF) en los slots con RAM en pág. 2. | `8 seg 128K regs ok`, `sin mapper (RAM plana)`, o `seg 5 @9234 e=92 g=00` / `FD s2 @4000 …` si un segmento o un registro falla. |
-| **VDP** | El chip de vídeo de la placa. | Tipo (`TMS`, `9938`, `9958`), registro de estado, frames por segundo, frecuencia de /INT con las interrupciones activadas. `VDP mudo` si no contesta. |
-| **VRAM** | Toda la VRAM (16/64/128 KB) por los puertos 98/99. | `16K sin fallos`, o `1 fallos bits:5A / 1o @b5:0234 e=5A g=00 f6`: cuántos, qué bits, primer fallo (banco:dirección), fase. |
-| **CMD** | Solo V9938/V9958: el motor de comandos (HMMV + HMMM). | `verificados` o `motor colgado`. |
-| **SPRITE** | Colisión de sprites y bandera de 5º sprite, renderizando de verdad. | `colis:OK 5o=4`. |
-| **PPI** | El 8255 de la placa. | Lo escrito y lo releído en A8 y AA, y lo que lee A9 (columna de teclado). |
-| **PSG** | El AY-3-8910 de la placa. | `R0-R13 releen bien` o la lista de registros que fallan. |
-| **RTC** | Solo MSX2: el RP5C01 (B4/B5). | `RP5C01 seg 32>34 RAM26 ok` (los segundos avanzan y sus 26 nibbles de RAM guardan), `PARADO: 32kHz/pila`, `no responde`. En MSX1: `no hay (placa MSX1)`. |
+| **RELOJ** (clock) | The 3.58 MHz clock the board feeds the Z80 (it comes from the VDP). | `3579.6k placa` = measured kHz and source (`placa` = board). `INT!` = no clock arrives and the Goa'uld runs on its own. `RST H/0` = /RESET level and edges since power-up. `WT H` = /WAIT level (`/WAIT pegado` = stuck /WAIT, released by the Goa'uld). |
+| **BIOS** | Reads the board's ROM (0000-7FFF) through the bus. | The first two bytes (`F3C3` = DI;JP), the id bytes 002B-2D, the CRC32 and the machine name when recognised (95 MSX1/MSX2 ROMs). `BIOS muda` = mute (all FF). A data line that never moved is reported below in the hints. |
+| **MAPA** (map) | Every slot (and subslot when expanded) per page. | `ROM` reads something, `RAM` can be written, `---` empty, `own` the page the Doctor itself lives in (emulator only). |
+| **RAM** | Every RAM block of the map: March C-, walking bits, address lines, retention. | `S0 p3 16383 b OK`, or `FALLO @C123 e=00 g=01 f2` = failure at address, expected, got, phase. Pages of one slot are grouped: `p0-p2 48 KB`. |
+| **MAPPER** | Memory mapper (ports FC-FF) in every slot with RAM in page 2. | `8 seg 128K regs ok` (8 segments, registers ok), `sin mapper (RAM plana)` = plain RAM, or `seg 5 @9234 e=92 g=00` / `FD s2 @4000 …` when a segment or a register fails. |
+| **VDP** | The board's video chip. | Type (`TMS`, `9938`, `9958`), status register, frames per second, /INT rate with interrupts enabled. `VDP mudo` = no answer. |
+| **VRAM** | All the VRAM (16/64/128 KB) through ports 98/99. | `16K sin fallos` = no failures, or `1 fallos bits:5A / 1o @b5:0234 e=5A g=00 f6`: count, bad bits, first failure (bank:address), phase. |
+| **CMD** | V9938/V9958 only: the command engine (HMMV + HMMM). | `verificados` = verified, or `motor colgado` = engine hung. |
+| **SPRITE** | Sprite collision and 5th-sprite flag, really rendered. | `colis:OK 5o=4`. |
+| **PPI** | The board's 8255. | Written vs. read back on A8 and AA, and what A9 reads (keyboard column). |
+| **PSG** | The board's AY-3-8910. | `R0-R13 releen bien` = read back fine, or the list of failing registers. |
+| **RTC** | MSX2 only: the RP5C01 (B4/B5). | `RP5C01 seg 32>34 RAM26 ok` (seconds advance, its 26 RAM nibbles hold), `PARADO: 32kHz/pila` = stopped (crystal/battery), `no responde` = no answer. MSX1: `no hay (placa MSX1)` = none. |
 
-Debajo, las **pistas** (líneas `>`): lo que el Doctor deduce del conjunto.
+Below, the **hints** (`>` lines): what the Doctor deduces from the whole picture.
 
 ```
-> Sin reloj Z80: VDP, cristal 10.7MHz o 5V
-> BIOS muda y VDP mudo: 5V, reset, /SLTSL
-> BUS DATOS pegado (todo falla por eso): D1=1
-> VRAM: nibble D0-D3 64-128K
-> pag3 lee y no escribe: VCC/GND RAM, /W
-> RAM y VRAM fallan: alimentacion DRAM?
-> Teclado placa: pegada f/b 8/0
-> Teclado placa: 26 cambios/s, ignorado
+> Sin reloj Z80: VDP, cristal 10.7MHz o 5V       no Z80 clock: VDP, 10.7 MHz crystal or 5 V
+> BIOS muda y VDP mudo: 5V, reset, /SLTSL        mute BIOS and mute VDP: 5 V, reset, /SLTSL
+> BUS DATOS pegado (todo falla por eso): D1=1    data bus stuck (everything fails because of it)
+> VRAM: nibble D0-D3 64-128K                     which VRAM chip: nibble / 64 KB half
+> pag3 lee y no escribe: VCC/GND RAM, /W         page 3 reads but does not write: RAM VCC/GND, /W
+> RAM y VRAM fallan: alimentacion DRAM?          RAM and VRAM both fail: DRAM supply?
+> Teclado placa: pegada f/b 8/0                  board keyboard: stuck key row/bit
+> Teclado placa: 26 cambios/s, ignorado          board keyboard: 26 changes/s by itself, ignored
 ```
 
-Ejemplo real: el segundo HB-10, con la RAM que lee pero no escribe (4416):
+Real example: the second HB-10, whose RAM reads but does not write (4416 DRAMs):
 
-![Resumen HB-10 con la RAM rota](docs/img/resumen_hb10_ram.png)
+![HB-10 summary with the RAM fault](docs/img/resumen_hb10_ram.png)
 
-Ejemplo de MSX2 (Philips NMS 8250, en openMSX):
+An MSX2 (Philips NMS 8250, in openMSX):
 
-![Resumen NMS 8250](docs/img/resumen_nms8250.png)
+![NMS 8250 summary](docs/img/resumen_nms8250.png)
 
-### 3. Teclas
+### 3. Keys
 
-El Doctor lee el teclado de la placa directamente (matriz por el PPI) y solo
-reacciona a una tecla que **pasa de suelta a pulsada** tras medio segundo de
-calma: una membrana pegada o con falsos contactos no puede moverlo, y sale en las pistas.
+The Doctor scans the board's keyboard matrix itself (through the PPI) and only reacts
+to a key that **goes from released to pressed** after half a second of quiet: a stuck
+or intermittent membrane cannot drive it, and it is reported in the hints.
 
-| Tecla | Pantalla |
+| Key | Screen |
 |---|---|
-| **SPC** | Repite todo el diagnóstico. |
-| **V** | Patrones en la salida de vídeo **de la placa**: `1` cuadro del Doctor (texto+barras), `2` barras de color a pantalla completa, `3` blanco pleno, `4` negro (solo sincronismo); `ESC` vuelve y el patrón se queda puesto. Para la etapa de vídeo y el conector AV/RF (COMVID del TMS, pin 36: ~1 Vpp). |
-| **X** | Página 3 (C000 y E000) en crudo: dos lecturas seguidas y una tercera tras escribir 00..FF. `leo1 != leo2` = el bus flota; si la tercera es igual que las otras, la RAM no escribe. |
-| **B** | Volcado hexadecimal de los primeros bytes de la BIOS de la placa + CRC. |
-| **K** | Matriz del teclado de la placa en vivo (11 filas × 8 bits, `X` = pulsada); el LED CAPS parpadea. `ESC` vuelve. |
-| **T** | Autotest de la rutina de RAM sin pila sobre la página 2 del propio Goa'uld. |
-| **M** | El panel del monitor de bus original: líneas de datos y direcciones que nunca se movieron, /INT, /WAIT, contadores. `ESC` vuelve. |
+| **SPC** | Runs the whole diagnostic again. |
+| **V** | Test patterns on the **board's** video output: `1` the Doctor frame (text + bars), `2` full-screen colour bars, `3` full white, `4` black (sync only); `ESC` returns and the pattern stays. For the video stage and the AV/RF connector (TMS COMVID, pin 36: ~1 Vpp). |
+| **X** | Page 3 (C000 and E000) raw: two consecutive reads and a third one after writing 00..FF. `leo1 != leo2` = floating bus; if the third read equals the others, the RAM does not write. |
+| **B** | Hex dump of the first bytes of the board's BIOS + CRC. |
+| **K** | Live keyboard matrix of the board (11 rows × 8 bits, `X` = pressed); the CAPS LED blinks. `ESC` returns. |
+| **T** | Self-test of the stackless RAM routine on the Goa'uld's own page 2. |
+| **M** | The original bus-monitor panel: data and address lines that never moved, /INT, /WAIT, counters. `ESC` returns. |
 
-Pantalla `K` (SPC pulsada):
+Screen `K` (SPC pressed):
 
-![Pantalla K](docs/img/pantalla_k_teclado.png)
+![Screen K](docs/img/pantalla_k_teclado.png)
 
-Pantalla `X` (la HB-10 sana: la página 3 contiene el C3 que dejó el test de retención y acepta el 00..FF):
+Screen `X` (the healthy HB-10: page 3 holds the C3 left by the retention test and takes the 00..FF):
 
-![Pantalla X](docs/img/pantalla_x_pag3.png)
+![Screen X](docs/img/pantalla_x_pag3.png)
 
-Pantalla `M`:
+Screen `M`:
 
-![Pantalla M](docs/img/pantalla_m_monitor.png)
+![Screen M](docs/img/pantalla_m_monitor.png)
 
-Pantalla `B`:
+Screen `B`:
 
-![Pantalla B](docs/img/pantalla_b_bios.png)
+![Screen B](docs/img/pantalla_b_bios.png)
 
-## Reparaciones reales
+## Real repairs
 
-![La Sony HB-10 con el Goa'uld](docs/img/foto_placa_hb10.jpg)
+![The Sony HB-10 with the Goa'uld](docs/img/foto_placa_hb10.jpg)
 
-- **HB-10 nº 1**: el Doctor lo daba todo OK — BIOS, RAM, VDP, VRAM, sprites, PSG — y aun
-  así no había imagen. Si desde el zócalo todo está bien, lo que queda es lo que el Z80 no
-  ve: la etapa de salida de vídeo. Era una pista cortada en el video out.
-- **HB-10 nº 2**: `BUS DATOS pegado: D1=1` con todo fallando → pista de D1 cortada.
-  Puenteada, la placa volvió a arrancar; quedó `pag3 lee y no escribe` → los 4416.
+- **HB-10 #1**: the Doctor passed everything — BIOS, RAM, VDP, VRAM, sprites, PSG — and
+  still there was no picture. When everything is fine from the socket, what is left is what
+  the Z80 cannot see: the video output stage. A cut trace in the video out.
+- **HB-10 #2**: `BUS DATOS pegado: D1=1` with everything failing → the D1 trace was cut.
+  Bridged, the board booted again; what remained was `pag3 lee y no escribe` → the 4416s.
 
-## Compilar
+## Building
 
 ```bash
 cd diag
@@ -137,11 +142,11 @@ cd ../fpga
 gw_sh build_diag.tcl                                   # Gowin 1.9.9 -> impl/pnr/project.fs
 ```
 
-Probar sin hardware, en openMSX: `openmsx -machine Sony_HB-10 -carta diag/DIAG.ROM`
-(sin el monitor de bus la primera fila dice `n/d sin monitor`; el resto es igual).
+Try it without hardware, in openMSX: `openmsx -machine Sony_HB-10 -carta diag/DIAG.ROM`
+(without the bus monitor the first row says `n/d sin monitor`; the rest is the same).
 
-Las pantallas de `docs/img` son transcripciones exactas dibujadas con la fuente MSX
-(`docs/tools/make_screens.py`); las fotos son de las dos HB-10 reales.
+The screens in `docs/img` are exact transcriptions drawn with the MSX font
+(`docs/tools/make_screens.py`); the photos are of the two real HB-10s.
 
-Los detalles de cómo funciona por dentro (registros del monitor de bus, tests sin pila,
-qué se quita de la FPGA, cómo se validó) están en [docs/notas-tecnicas.md](docs/notas-tecnicas.md).
+How it works inside (bus-monitor registers, stackless tests, what the FPGA build leaves
+out, how it was validated) is in [docs/notas-tecnicas.md](docs/notas-tecnicas.md).
