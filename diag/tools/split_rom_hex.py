@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """split_rom_hex.py - DIAG.ROM (16 KB) -> fpga/msx_debug/diag_rom_0.hex ..
 diag_rom_7.hex, 2048 lines each (one byte per line), one file per BSRAM
-primitive of diag_rom.v.  Also writes diag_rom.hex (the whole image) for
-reference.  Run from anywhere:  python diag/tools/split_rom_hex.py
+primitive of diag_rom.v.  Run from anywhere:  python diag/tools/split_rom_hex.py
 """
 import os, sys
 

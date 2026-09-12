@@ -2,7 +2,7 @@
 
 🇪🇸 [Versión en castellano](README.es.md)
 
-![The Goa'uld in the Z80 socket of a Sony HB-10](docs/img/foto_goauld_zocalo.jpg)
+![The Goa'uld in the Z80 socket of an MSX1](docs/img/foto_goauld_zocalo.jpg)
 
 A special firmware for the **MSX Goa'uld** (Tang Nano 20K in the Z80 socket) that,
 instead of booting the MSX, **tests the board** from the inside: BIOS, RAM, memory
@@ -11,8 +11,8 @@ mapper, VDP, VRAM, sprites, PPI, PSG, RTC and keyboard. The verdict comes out of
 still see what is wrong. Think of a Fluke 9010A in-circuit tester, built with what you
 already have: the Goa'uld.
 
-Born for two Japanese Sony HB-10s that would not boot; it works on **any MSX1 or MSX2**
-(any slot and subslot, V9938/V9958 with 64/128 KB VRAM, memory mapper, RTC).
+It works on **any MSX1 or MSX2**: every slot and subslot is mapped and tested, TMS or
+V9938/V9958 with 16/64/128 KB VRAM, memory mapper, RTC.
 
 Derived from [jabadiagm/MSXgoauldSD_tn20k](https://github.com/jabadiagm/MSXgoauldSD_tn20k)
 (the Goa'uld MSX2+ core: T80, HRA!'s V9958, SDRAM, flash loader). GPLv3.
@@ -43,13 +43,13 @@ mapper). While the VDP is under test the **board's own video output** shows colo
 bars, text and sprites: with its monitor connected you can see whether the video
 stage works.
 
-![The HB-10's AV output during the VDP test](docs/img/foto_av_placa_patron.jpg)
+![The board's own AV output during the VDP test](docs/img/foto_av_placa_patron.jpg)
 
 ### 2. The summary
 
-Real example: a healthy Sony HB-10.
+Example: an MSX1 (Sony HB-10) with everything OK.
 
-![HB-10 summary, all good](docs/img/resumen_hb10_ok.png)
+![MSX1 summary, all good](docs/img/resumen_hb10_ok.png)
 
 Every row ends in **OK**, **MAL** (bad) or **n/d** (not applicable). Read it top to
 bottom: the first MAL row is usually the fault.
@@ -82,9 +82,9 @@ Below, the **hints** (`>` lines): what the Doctor deduces from the whole picture
 > Teclado placa: 26 cambios/s, ignorado          board keyboard: 26 changes/s by itself, ignored
 ```
 
-Real example: the second HB-10, whose RAM reads but does not write (4416 DRAMs):
+Example: an MSX1 whose RAM reads but does not take writes:
 
-![HB-10 summary with the RAM fault](docs/img/resumen_hb10_ram.png)
+![MSX1 summary with a RAM fault](docs/img/resumen_hb10_ram.png)
 
 An MSX2 (Philips NMS 8250, in openMSX):
 
@@ -115,7 +115,7 @@ Screen `W`:
 
 ![Screen W](docs/img/pantalla_w_martillo.png)
 
-Screen `X` (the healthy HB-10: page 3 holds the C3 left by the retention test and takes the 00..FF):
+Screen `X` (a healthy page 3: it holds the C3 left by the retention test and takes the 00..FF):
 
 ![Screen X](docs/img/pantalla_x_pag3.png)
 
@@ -126,16 +126,6 @@ Screen `M`:
 Screen `B`:
 
 ![Screen B](docs/img/pantalla_b_bios.png)
-
-## Real repairs
-
-![The Sony HB-10 with the Goa'uld](docs/img/foto_placa_hb10.jpg)
-
-- **HB-10 #1**: the Doctor passed everything — BIOS, RAM, VDP, VRAM, sprites, PSG — and
-  still there was no picture. When everything is fine from the socket, what is left is what
-  the Z80 cannot see: the video output stage. A cut trace in the video out.
-- **HB-10 #2**: `BUS DATOS pegado: D1=1` with everything failing → the D1 trace was cut.
-  Bridged, the board booted again; what remained was `pag3 lee y no escribe` → the 4416s.
 
 ## Building
 
@@ -151,7 +141,7 @@ Try it without hardware, in openMSX: `openmsx -machine Sony_HB-10 -carta diag/DI
 (without the bus monitor the first row says `n/d sin monitor`; the rest is the same).
 
 The screens in `docs/img` are exact transcriptions drawn with the MSX font
-(`docs/tools/make_screens.py`); the photos are of the two real HB-10s.
+(`docs/tools/make_screens.py`).
 
 How it works inside (bus-monitor registers, stackless tests, what the FPGA build leaves
 out, how it was validated) is in [docs/notas-tecnicas.md](docs/notas-tecnicas.md).

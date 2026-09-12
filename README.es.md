@@ -2,7 +2,7 @@
 
 🇬🇧 [English version](README.md)
 
-![El Goa'uld en el zócalo del Z80 de una Sony HB-10](docs/img/foto_goauld_zocalo.jpg)
+![El Goa'uld en el zócalo del Z80 de un MSX1](docs/img/foto_goauld_zocalo.jpg)
 
 Firmware especial para el **MSX Goa'uld** (Tang Nano 20K en el zócalo del Z80) que,
 en vez de arrancar el MSX, **prueba la placa** desde dentro: BIOS, RAM, mapper,
@@ -11,8 +11,8 @@ Goa'uld**, así que la placa puede tener la BIOS, la RAM y el vídeo muertos y a
 así ves qué falla. Es un comprobador en circuito al estilo Fluke 9010A, hecho con
 lo que ya tienes: el Goa'uld.
 
-Nacido para dos Sony HB-10 japoneses que no arrancaban; sirve para **cualquier
-MSX1 o MSX2** (cualquier slot y subslot, V9938/V9958 con 64/128 KB, mapper, RTC).
+Sirve para **cualquier MSX1 o MSX2**: mapea y prueba todos los slots y subslots,
+TMS o V9938/V9958 con 16/64/128 KB de VRAM, mapper de memoria y RTC.
 
 Derivado de [jabadiagm/MSXgoauldSD_tn20k](https://github.com/jabadiagm/MSXgoauldSD_tn20k)
 (el core MSX2+ del Goa'uld: T80, V9958 de HRA!, SDRAM, cargador de flash). Licencia GPLv3.
@@ -40,13 +40,13 @@ Tarda entre 10 s (MSX1) y ~40 s (MSX2 con 128 KB de VRAM y mapper). Mientras
 prueba el VDP, la salida de vídeo **de la placa** enseña barras de color, texto
 y sprites: si tienes su monitor conectado, ahí ves si la etapa de vídeo funciona.
 
-![La salida AV de la HB-10 durante el test del VDP](docs/img/foto_av_placa_patron.jpg)
+![La salida AV de la propia placa durante el test del VDP](docs/img/foto_av_placa_patron.jpg)
 
 ### 2. El resumen
 
-Ejemplo real: Sony HB-10 sano.
+Ejemplo: un MSX1 (Sony HB-10) con todo bien.
 
-![Resumen HB-10 sano](docs/img/resumen_hb10_ok.png)
+![Resumen MSX1 sano](docs/img/resumen_hb10_ok.png)
 
 Cada fila termina en **OK**, **MAL** o **n/d** (no aplica). Se lee de arriba abajo:
 la primera fila en MAL suele ser la avería.
@@ -79,9 +79,9 @@ Debajo, las **pistas** (líneas `>`): lo que el Doctor deduce del conjunto.
 > Teclado placa: 26 cambios/s, ignorado
 ```
 
-Ejemplo real: el segundo HB-10, con la RAM que lee pero no escribe (4416):
+Ejemplo: un MSX1 cuya RAM lee pero no acepta escrituras:
 
-![Resumen HB-10 con la RAM rota](docs/img/resumen_hb10_ram.png)
+![Resumen MSX1 con fallo de RAM](docs/img/resumen_hb10_ram.png)
 
 Ejemplo de MSX2 (Philips NMS 8250, en openMSX):
 
@@ -112,7 +112,7 @@ Pantalla `W`:
 
 ![Pantalla W](docs/img/pantalla_w_martillo.png)
 
-Pantalla `X` (la HB-10 sana: la página 3 contiene el C3 que dejó el test de retención y acepta el 00..FF):
+Pantalla `X` (una página 3 sana: contiene el C3 que dejó el test de retención y acepta el 00..FF):
 
 ![Pantalla X](docs/img/pantalla_x_pag3.png)
 
@@ -123,16 +123,6 @@ Pantalla `M`:
 Pantalla `B`:
 
 ![Pantalla B](docs/img/pantalla_b_bios.png)
-
-## Reparaciones reales
-
-![La Sony HB-10 con el Goa'uld](docs/img/foto_placa_hb10.jpg)
-
-- **HB-10 nº 1**: el Doctor lo daba todo OK — BIOS, RAM, VDP, VRAM, sprites, PSG — y aun
-  así no había imagen. Si desde el zócalo todo está bien, lo que queda es lo que el Z80 no
-  ve: la etapa de salida de vídeo. Era una pista cortada en el video out.
-- **HB-10 nº 2**: `BUS DATOS pegado: D1=1` con todo fallando → pista de D1 cortada.
-  Puenteada, la placa volvió a arrancar; quedó `pag3 lee y no escribe` → los 4416.
 
 ## Compilar
 
@@ -148,7 +138,7 @@ Probar sin hardware, en openMSX: `openmsx -machine Sony_HB-10 -carta diag/DIAG.R
 (sin el monitor de bus la primera fila dice `n/d sin monitor`; el resto es igual).
 
 Las pantallas de `docs/img` son transcripciones exactas dibujadas con la fuente MSX
-(`docs/tools/make_screens.py`); las fotos son de las dos HB-10 reales.
+(`docs/tools/make_screens.py`).
 
 Los detalles de cómo funciona por dentro (registros del monitor de bus, tests sin pila,
 qué se quita de la FPGA, cómo se validó) están en [docs/notas-tecnicas.md](docs/notas-tecnicas.md) (en inglés).
