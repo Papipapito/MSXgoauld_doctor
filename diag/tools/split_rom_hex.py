@@ -14,6 +14,4 @@ if len(data) != 16384:
 for b in range(8):
     with open(os.path.join(out, "diag_rom_%d.hex" % b), "w", newline="\n") as f:
         f.writelines("%02x\n" % x for x in data[b * 2048:(b + 1) * 2048])
-with open(os.path.join(out, "diag_rom.hex"), "w", newline="\n") as f:
-    f.writelines("%02x\n" % x for x in data)
 print("8 banks of 2048 lines written to", os.path.normpath(out))
