@@ -196,8 +196,34 @@ PsgPrint:
     call PrintOK
     ret
 psgBad:
+    ld   b, 14
+    ld   c, 0
+psgCnt:
+    srl  h
+    rr   l
+    jr   nc, psgCnt1
+    inc  c
+psgCnt1:
+    djnz psgCnt
+    ld   a, c
+    cp   14
+    jr   nz, psgSome
+    ld   hl, sPsgNone
+    call PrintStr
+    call PrintFAIL
+    ret
+psgSome:
     ld   hl, sPsgBad
     call PrintStr
+    ld   a, c
+    cp   6
+    jr   c, psgListAll
+    call PrintDec8              ; too many for one row: "9 de 14"
+    ld   hl, sPsgOf
+    call PrintStr
+    call PrintFAIL
+    ret
+psgListAll:
     ld   de, (psgFail)
     ld   b, 0
 psgList:
@@ -223,6 +249,8 @@ psgNextBit:
 sPsgHdr: db "PSG    ", 0
 sPsgOK:  db "R0-R13 releen bien", 0
 sPsgBad: db "fallan: ", 0
+sPsgOf:  db " de 14", 0
+sPsgNone: db "ninguno relee (R0-R13)", 0
 
 ; ===========================================================================
 ;  KbdScreen  -  live keyboard matrix (11 rows x 8 bits), CAPS LED blinks.

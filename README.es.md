@@ -22,8 +22,9 @@ Derivado de [jabadiagm/MSXgoauldSD_tn20k](https://github.com/jabadiagm/MSXgoauld
 - Un Goa'uld (Tang Nano 20K) pinchado en el zócalo del Z80 de la placa a reparar y un monitor HDMI.
 - Grabar en la flash del Tang Nano, con el programador de Gowin, como en el Goa'uld normal:
   - `GoauldDoctor_v1.1.fs` → **0x000000** (o cargarlo en SRAM para una sesión).
-  - El **pack de BIOS del Goa'uld v1.2** → **0x200000** (el mismo que ya usa tu Goa'uld;
-    contiene BIOS con copyright y no se distribuye aquí).
+  - El **pack de BIOS del Goa'uld v1.2** (`pack_bios_goauld_v1.2.bin`, adjunto a la
+    [release v1.0](https://github.com/Papipapito/MSXgoauld_doctor/releases/tag/v1.0)) → **0x200000**,
+    el mismo que ya usa tu Goa'uld.
 - La placa tiene que alimentar el Goa'uld: si el Goa'uld se reinicia, mide los 5 V que le llegan.
 
 No hace falta tarjeta SD, ni teclado USB, ni WiFi: esta build los quita a propósito.
@@ -58,20 +59,21 @@ la primera fila en MAL suele ser la avería.
 | **MAPA** | Cada slot (y subslot si está expandido) por página. | `ROM` lee algo, `RAM` se puede escribir, `---` vacío, `own` la página donde vive el propio Doctor (solo en emulador). |
 | **RAM** | Cada bloque RAM del mapa: March C-, bits andantes, direcciones, retención. | `S0 p3 16383 b OK`, o `FALLO @C123 e=00 g=01 f2` = dirección, esperado, leído y fase. Páginas iguales de un slot se agrupan: `p0-p2 48 KB`. |
 | **MAPPER** | Mapper de memoria (puertos FC-FF) en los slots con RAM en pág. 2. | `8 seg 128K regs ok`, `sin mapper (RAM plana)`, o `seg 5 @9234 e=92 g=00` / `FD s2 @4000 …` si un segmento o un registro falla. |
-| **VDP** | El chip de vídeo de la placa. | Tipo (`TMS`, `9938`, `9958`), registro de estado, frames por segundo, frecuencia de /INT con las interrupciones activadas. `VDP mudo` si no contesta. |
+| **VDP** | El chip de vídeo de la placa. | Tipo (`TMS`, `9938`, `9958`; `?` si la VRAM no guarda nada y no se puede saber), registro de estado, frames por segundo, frecuencia de /INT con las interrupciones activadas. `VDP mudo` si no contesta. |
 | **VRAM** | Toda la VRAM (16/64/128 KB) por los puertos 98/99. | `16K sin fallos`, o `1 fallos bits:5A / 1o @b5:0234 e=5A g=00 f6`: cuántos, qué bits, primer fallo (banco:dirección), fase. |
 | **CMD** | Solo V9938/V9958: el motor de comandos (HMMV + HMMM). | `verificados` o `motor colgado`. |
 | **SPRITE** | Colisión de sprites y bandera de 5º sprite, renderizando de verdad. | `colis:OK 5o=4`. |
 | **PPI** | El 8255 de la placa. | Lo escrito y lo releído en A8 y AA, y lo que lee A9 (columna de teclado). |
-| **PSG** | El AY-3-8910 de la placa. | `R0-R13 releen bien` o la lista de registros que fallan. |
+| **PSG** | El AY-3-8910 de la placa. | `R0-R13 releen bien`, la lista de registros que fallan, `fallan 9 de 14` (demasiados para listarlos) o `ninguno relee`. |
 | **RTC** | Solo MSX2: el RP5C01 (B4/B5). | `RP5C01 seg 32>34 RAM26 ok` (los segundos avanzan y sus 26 nibbles de RAM guardan), `PARADO: 32kHz/pila`, `no responde`. En MSX1: `no hay (placa MSX1)`. |
 
 Debajo, las **pistas** (líneas `>`): lo que el Doctor deduce del conjunto.
 
 ```
-> Sin reloj Z80: VDP, cristal 10.7MHz o 5V
-> BIOS muda y VDP mudo: 5V, reset, /SLTSL
-> BUS DATOS pegado (todo falla por eso): D1=1
+> Sin reloj Z80: VDP, cristal 10.7M o 5V
+> BIOS muda y VDP mudo: 5V, reset, SLTSL
+> BUS DATOS pegado: D1=1                 (y ninguna RAM ha pasado)
+> Solo la ROM: D6=1 (chip o pista)       (la RAM pasa: la linea muere entre la ROM y el bus)
 > VRAM: nibble D0-D3 64-128K
 > pag3 lee y no escribe: VCC/GND RAM, /W
 > RAM y VRAM fallan: alimentacion DRAM?

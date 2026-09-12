@@ -526,6 +526,7 @@ VdpProbeType:
     ld   hl, 0
     call VdpSetRd
     in   a, (VDP_DATA)
+    ld   (vdpProbe), a          ; 5A = V99x8, A5 = TMS, else VRAM holds nothing
     cp   0x5A
     jr   nz, vptTms             ; overwritten: 14-bit address space = TMS
     ; ---- V99x8: 64 or 128 KB?  bank 4 = VRAM 0x10000 ----
@@ -1120,6 +1121,15 @@ VdpPrint:
     ret
 vpAlive:
     ld   a, (vdpType)
+    or   a
+    jr   nz, vpName
+    ld   a, (vdpProbe)
+    cp   0xA5
+    jr   z, vpName
+    ld   hl, sVdpUnk            ; "TMS" only because the VRAM kept nothing
+    jr   vpNamePr
+vpName:
+    ld   a, (vdpType)
     add  a, a
     ld   c, a
     ld   b, 0
@@ -1129,6 +1139,7 @@ vpAlive:
     inc  hl
     ld   h, (hl)
     ld   l, a
+vpNamePr:
     call PrintStr
     ld   hl, sVdpS0
     call PrintStr
@@ -1340,6 +1351,7 @@ vpSprBad:
 sVdpHdr:   db "VDP    ", 0
 vdpTypeNames: dw sVdpTms, sVdp9938, sVdp9958
 sVdpTms:   db "TMS  ", 0
+sVdpUnk:   db "?    ", 0
 sVdp9938:  db "9938 ", 0
 sVdp9958:  db "9958 ", 0
 sCmdHdr:   db "CMD    ", 0

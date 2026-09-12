@@ -24,8 +24,9 @@ The text on screen is in Spanish; every line is explained below.
 - A Goa'uld (Tang Nano 20K) plugged into the Z80 socket of the board under repair, and an HDMI monitor.
 - Flash the Tang Nano with the Gowin programmer, exactly like a normal Goa'uld:
   - `GoauldDoctor_v1.1.fs` → **0x000000** (or load it into SRAM for one session).
-  - The **Goa'uld v1.2 BIOS pack** → **0x200000** (the same one your Goa'uld already uses;
-    it contains copyrighted BIOS ROMs and is not distributed here).
+  - The **Goa'uld v1.2 BIOS pack** (`pack_bios_goauld_v1.2.bin`, attached to
+    [release v1.0](https://github.com/Papipapito/MSXgoauld_doctor/releases/tag/v1.0)) → **0x200000**,
+    the same one your Goa'uld already uses.
 - The board has to power the Goa'uld: if the Goa'uld keeps resetting, measure the 5 V it gets.
 
 No SD card, no USB keyboard, no WiFi: this build leaves them out on purpose.
@@ -61,20 +62,21 @@ bottom: the first MAL row is usually the fault.
 | **MAPA** (map) | Every slot (and subslot when expanded) per page. | `ROM` reads something, `RAM` can be written, `---` empty, `own` the page the Doctor itself lives in (emulator only). |
 | **RAM** | Every RAM block of the map: March C-, walking bits, address lines, retention. | `S0 p3 16383 b OK`, or `FALLO @C123 e=00 g=01 f2` = failure at address, expected, got, phase. Pages of one slot are grouped: `p0-p2 48 KB`. |
 | **MAPPER** | Memory mapper (ports FC-FF) in every slot with RAM in page 2. | `8 seg 128K regs ok` (8 segments, registers ok), `sin mapper (RAM plana)` = plain RAM, or `seg 5 @9234 e=92 g=00` / `FD s2 @4000 …` when a segment or a register fails. |
-| **VDP** | The board's video chip. | Type (`TMS`, `9938`, `9958`), status register, frames per second, /INT rate with interrupts enabled. `VDP mudo` = no answer. |
+| **VDP** | The board's video chip. | Type (`TMS`, `9938`, `9958`; `?` when the VRAM keeps nothing, so the type cannot be told), status register, frames per second, /INT rate with interrupts enabled. `VDP mudo` = no answer. |
 | **VRAM** | All the VRAM (16/64/128 KB) through ports 98/99. | `16K sin fallos` = no failures, or `1 fallos bits:5A / 1o @b5:0234 e=5A g=00 f6`: count, bad bits, first failure (bank:address), phase. |
 | **CMD** | V9938/V9958 only: the command engine (HMMV + HMMM). | `verificados` = verified, or `motor colgado` = engine hung. |
 | **SPRITE** | Sprite collision and 5th-sprite flag, really rendered. | `colis:OK 5o=4`. |
 | **PPI** | The board's 8255. | Written vs. read back on A8 and AA, and what A9 reads (keyboard column). |
-| **PSG** | The board's AY-3-8910. | `R0-R13 releen bien` = read back fine, or the list of failing registers. |
+| **PSG** | The board's AY-3-8910. | `R0-R13 releen bien` = read back fine, the list of failing registers, `fallan 9 de 14` (too many to list) or `ninguno relee` (none reads back). |
 | **RTC** | MSX2 only: the RP5C01 (B4/B5). | `RP5C01 seg 32>34 RAM26 ok` (seconds advance, its 26 RAM nibbles hold), `PARADO: 32kHz/pila` = stopped (crystal/battery), `no responde` = no answer. MSX1: `no hay (placa MSX1)` = none. |
 
 Below, the **hints** (`>` lines): what the Doctor deduces from the whole picture.
 
 ```
-> Sin reloj Z80: VDP, cristal 10.7MHz o 5V       no Z80 clock: VDP, 10.7 MHz crystal or 5 V
-> BIOS muda y VDP mudo: 5V, reset, /SLTSL        mute BIOS and mute VDP: 5 V, reset, /SLTSL
-> BUS DATOS pegado (todo falla por eso): D1=1    data bus stuck (everything fails because of it)
+> Sin reloj Z80: VDP, cristal 10.7M o 5V         no Z80 clock: VDP, 10.7 MHz crystal or 5 V
+> BIOS muda y VDP mudo: 5V, reset, SLTSL         mute BIOS and mute VDP: 5 V, reset, /SLTSL
+> BUS DATOS pegado: D1=1                         data bus stuck (no RAM passed either)
+> Solo la ROM: D6=1 (chip o pista)               only while the ROM drives the bus (RAM is fine): ROM chip or its trace
 > VRAM: nibble D0-D3 64-128K                     which VRAM chip: nibble / 64 KB half
 > pag3 lee y no escribe: VCC/GND RAM, /W         page 3 reads but does not write: RAM VCC/GND, /W
 > RAM y VRAM fallan: alimentacion DRAM?          RAM and VRAM both fail: DRAM supply?

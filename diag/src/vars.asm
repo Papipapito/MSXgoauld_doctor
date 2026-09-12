@@ -109,6 +109,7 @@ sprColl:     ds  1, 0       ; S#0 with sprites overlapping (C must be 1)
 sprFifth:    ds  1, 0       ; S#0 with 5 sprites on a line (5S=1, num=4)
 vdpTmp:      ds  1, 0
 vdpType:     ds  1, 0       ; 0 TMS, 1 V9938, 2 V9958
+vdpProbe:    ds  1, 0       ; type probe read-back: 5A V99x8, A5 TMS, else ?
 vramKB:      ds  1, 0       ; 16 / 64 / 128
 vrBanks:     ds  1, 0       ; vramKB / 16
 vrBank:      ds  1, 0       ; bank under test

@@ -621,7 +621,13 @@ hBus:
     or   c
     jr   z, hStuck
     ld   (tmpB), a
-    ld   hl, sHintBus
+    call AnyRamOk               ; some RAM block passed: the bus is fine,
+    ld   hl, sHintBus           ; the line dies between the ROM and the bus
+    jr   nz, hBusTxt
+    xor  a
+    ld   (tmpB), a
+    ld   hl, sHintRomLn
+hBusTxt:
     call PrintStr
     ld   a, (biosDead + 1)      ; never LOW -> stuck at 1
     ld   e, '1'
@@ -629,6 +635,11 @@ hBus:
     ld   a, (biosDead + 0)      ; never HIGH -> stuck at 0
     ld   e, '0'
     call HintBusBits
+    call AnyRamOk
+    jr   nz, hBusEnd
+    ld   hl, sHintRomLn2
+    call PrintStr
+hBusEnd:
     call HintNext
 hStuck:
     ; 2c. keyboards: each source alone at boot - noise (-> dropped) or stuck keys
@@ -715,8 +726,10 @@ hnRoom:
     ld   c, 1
     jp   SetPos
 
-sHintClk:   db "> Sin reloj Z80: VDP, cristal 10.7MHz o 5V", 0
-sHintBus:   db "> BUS DATOS pegado (todo falla por eso):", 0
+sHintClk:   db "> Sin reloj Z80: VDP, cristal 10.7M o 5V", 0
+sHintBus:   db "> BUS DATOS pegado:", 0
+sHintRomLn: db "> Solo la ROM:", 0
+sHintRomLn2: db " (chip o pista)", 0
 sHintKbdBoard: db "> Teclado placa: ", 0
 sHintKbdUsb:   db "> Teclado USB: ", 0
 sHintKbdNoise: db " cambios/s, ignorado", 0
@@ -840,7 +853,7 @@ hbbNext:
     ld   a, c
     jr   c, hbbLoop
     ret
-sHintDead:  db "> BIOS muda y VDP mudo: 5V, reset, /SLTSL", 0
+sHintDead:  db "> BIOS muda y VDP mudo: 5V, reset, SLTSL", 0
 sHintVramA: db "> VRAM: nibble ", 0
 sHintD03:   db "D0-D3 ", 0
 sHintD47:   db "D4-D7 ", 0
@@ -848,6 +861,24 @@ sHintHalfLo: db "0-64K", 0
 sHintHalfHi: db "64-128K", 0
 sHintDram:  db "> RAM y VRAM fallan: alimentacion DRAM?", 0
 sHintRamRO: db "> pag3 lee y no escribe: VCC/GND RAM, /W", 0
+
+; AnyRamOk - NZ if no RAM block passed, Z if at least one did (status 0)
+AnyRamOk:
+    ld   a, (ramResN)
+    or   a
+    jr   z, arkNone
+    ld   b, a
+    ld   hl, ramRes + 2
+    ld   de, 8
+arkLoop:
+    ld   a, (hl)
+    or   a
+    ret  z
+    add  hl, de
+    djnz arkLoop
+arkNone:
+    or   1                      ; NZ
+    ret
 
 ; AnyRomPage3 - Z if some probed slot has ROM in page 3 with page 2 empty
 ;               (a ROM living only at C000-FFFF does not exist on MSX)
