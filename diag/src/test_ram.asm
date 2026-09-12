@@ -1253,12 +1253,12 @@ hamW:
 sHamTitle: db "MARTILLO DE ESCRITURAS EN PAG3, slot ", 0
 sHam1:     db "Escribiendo C000-FFFE sin parar.", 0
 sHam2:     db "Cada byte = un pulso de /WR del Z80.", 0
-sHam3:     db "OSCILOSCOPIO en /W del 4416 (pin 3):", 0
+sHam3:     db "OSCILOSCOPIO en /W del 4416 (pin 4):", 0
 sHam4:     db " tren de pulsos 5V->0V, ~0.3us cada", 0
 sHam5:     db " ~1.5us. Masa en pin 18 (VSS).", 0
-sHam6:     db "MULTIMETRO (DC) en pin 3: unos 4V.", 0
+sHam6:     db "MULTIMETRO (DC) en pin 4: unos 4V.", 0
 sHam7:     db " 5.0V fijo = /W no llega. 0V = pegado.", 0
-sHam8:     db "Compara con el pin 3 del otro 4416.", 0
+sHam8:     db "Compara con el pin 4 del otro 4416.", 0
 
 ; RawPickSlot - A = first slot id with RAM/ROM in page 3 (map order), else 0
 RawPickSlot:
