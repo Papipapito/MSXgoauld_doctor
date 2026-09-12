@@ -1,5 +1,7 @@
 # Goa'uld Doctor — diagnóstico de placas MSX desde el zócalo del Z80
 
+![El Goa'uld en el zócalo del Z80 de una Sony HB-10](docs/img/foto_goauld_zocalo.jpg)
+
 Firmware especial para el **MSX Goa'uld** (Tang Nano 20K en el zócalo del Z80) que,
 en vez de arrancar el MSX, **prueba la placa** desde dentro: BIOS, RAM, mapper,
 VDP, VRAM, sprites, PPI, PSG, RTC y teclado. El resultado sale por el **HDMI del
@@ -30,39 +32,19 @@ No hace falta tarjeta SD, ni teclado USB, ni WiFi: esta build los quita a propó
 
 Logo MSX2+ del Goa'uld (como siempre) y enseguida una línea de progreso:
 
-```
-GOAULD DOCTOR probando: BIOS MAPA RAM MAPPER VDP RTC
-```
+![probando](docs/img/arranque_probando.png)
 
 Tarda entre 10 s (MSX1) y ~40 s (MSX2 con 128 KB de VRAM y mapper). Mientras
 prueba el VDP, la salida de vídeo **de la placa** enseña barras de color, texto
 y sprites: si tienes su monitor conectado, ahí ves si la etapa de vídeo funciona.
 
+![La salida AV de la HB-10 durante el test del VDP](docs/img/foto_av_placa_patron.jpg)
+
 ### 2. El resumen
 
 Ejemplo real: Sony HB-10 sano.
 
-```
-GOAULD DOCTOR v1.0  monitor v2
-RELOJ  3579.6k placa RST H/0 WT H   OK
-BIOS   F3C3 id:00 00 00 CRC EE229390
-       HB-10+                      OK
-MAPA    pag0 pag1 pag2 pag3
- S0   ROM  ROM  ---  RAM
- S1   ---  ---  ---  ---
- S2   ---  ---  ---  ---
- S3   ---  ---  ---  ---
-RAM  S0 p3 16383 b                 OK
-MAPPER ninguno (sin RAM en pag2)   n/d
-VDP    TMS  S0=D1 F:59/s /INT:60Hz OK
-VRAM   16K sin fallos              OK
-SPRITE colis:OK   5o=4             OK
-PPI    A8 F0=F0 AA 3A=3A A9=FF     OK
-PSG    R0-R13 releen bien          OK
-RTC    no hay (placa MSX1)         n/d
-
-SPC=rep V=vid X=ram3 B=bios K=tec M=bus
-```
+![Resumen HB-10 sano](docs/img/resumen_hb10_ok.png)
 
 Cada fila termina en **OK**, **MAL** o **n/d** (no aplica). Se lee de arriba abajo:
 la primera fila en MAL suele ser la avería.
@@ -97,37 +79,11 @@ Debajo, las **pistas** (líneas `>`): lo que el Doctor deduce del conjunto.
 
 Ejemplo real: el segundo HB-10, con la RAM que lee pero no escribe (4416):
 
-```
-MAPA    pag0 pag1 pag2 pag3
- S0   ROM  ROM  ---  ROM
- …
-RAM    ninguna encontrada          MAL
-…
-> pag3 lee y no escribe: VCC/GND RAM, /W
-```
+![Resumen HB-10 con la RAM rota](docs/img/resumen_hb10_ram.png)
 
 Ejemplo de MSX2 (Philips NMS 8250, en openMSX):
 
-```
-BIOS   F3C3 id:91 11 01 CRC 6CDAF3A5
-       NMS8220+                    OK
-MAPA    pag0 pag1 pag2 pag3
- S0   ROM  ROM  ---  ---
- S1   ROM  ROM  ROM  ROM
- S2   ---  ---  ---  ---
- S3-0 ROM  ROM  ROM  ROM
- S3-2 RAM  RAM  RAM  own
- S3-3 ---  ROM  ---  ---
-RAM  S3-2 p0-p2 48 KB              OK
-MAPPER S3-2 8 seg 128K regs ok     OK
-VDP    9938 S0=1F F:51/s /INT:n/d  OK
-VRAM   128K sin fallos             OK
-CMD    HMMV+HMMM verificados       OK
-SPRITE colis:OK   5o=4             OK
-PPI    A8 F4=F4 AA 1A=1A A9=FF     OK
-PSG    R0-R13 releen bien          OK
-RTC    RP5C01 seg 32>34 RAM26 ok   OK
-```
+![Resumen NMS 8250](docs/img/resumen_nms8250.png)
 
 ### 3. Teclas
 
@@ -145,34 +101,25 @@ calma: una membrana pegada o con falsos contactos no puede moverlo, y sale en la
 | **T** | Autotest de la rutina de RAM sin pila sobre la página 2 del propio Goa'uld. |
 | **M** | El panel del monitor de bus original: líneas de datos y direcciones que nunca se movieron, /INT, /WAIT, contadores. `ESC` vuelve. |
 
-Pantalla `K`:
+Pantalla `K` (SPC pulsada):
 
-```
-MATRIZ TECLADO DE LA PLACA (sin USB)
-     b7 b6 b5 b4 b3 b2 b1 b0
-R0  . . . . . . . .
-R1  . . . . . . . .
-…
-R8  . . . . . . . X        <- SPC pulsada
-…
-X = tecla pulsada. LED CAPS parpadea.
-ESC para volver.
-```
+![Pantalla K](docs/img/pantalla_k_teclado.png)
 
-Pantalla `X`:
+Pantalla `X` (la HB-10 sana: la página 3 contiene el C3 que dejó el test de retención y acepta el 00..FF):
 
-```
-RAM PAG3 EN CRUDO (C000 / E000) S0
-C000:
-leo 1   00 00 00 00 00 00 00 00 …
-leo 2   00 00 00 00 00 00 00 00 …
-00..FF  00 01 02 03 04 05 06 07 …
-E000:
-…
-leo1!=leo2: bus flota. 00..FF: escritura
-```
+![Pantalla X](docs/img/pantalla_x_pag3.png)
+
+Pantalla `M`:
+
+![Pantalla M](docs/img/pantalla_m_monitor.png)
+
+Pantalla `B`:
+
+![Pantalla B](docs/img/pantalla_b_bios.png)
 
 ## Reparaciones reales
+
+![La Sony HB-10 con el Goa'uld](docs/img/foto_placa_hb10.jpg)
 
 - **HB-10 nº 1**: el Doctor lo daba todo OK — BIOS, RAM, VDP, VRAM, sprites, PSG — y aun
   así no había imagen. Si desde el zócalo todo está bien, lo que queda es lo que el Z80 no
@@ -192,6 +139,9 @@ gw_sh build_diag.tcl                                   # Gowin 1.9.9 -> impl/pnr
 
 Probar sin hardware, en openMSX: `openmsx -machine Sony_HB-10 -carta diag/DIAG.ROM`
 (sin el monitor de bus la primera fila dice `n/d sin monitor`; el resto es igual).
+
+Las pantallas de `docs/img` son transcripciones exactas dibujadas con la fuente MSX
+(`docs/tools/make_screens.py`); las fotos son de las dos HB-10 reales.
 
 Los detalles de cómo funciona por dentro (registros del monitor de bus, tests sin pila,
 qué se quita de la FPGA, cómo se validó) están en [docs/notas-tecnicas.md](docs/notas-tecnicas.md).
